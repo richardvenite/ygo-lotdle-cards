@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx
+    container_name: nginx-ygo
+    restart: always
+    ports:
+      - "80:80"
+    expose:
+      - "8000"
+    volumes:
+      - ../nginx_conf/ygo-lotdle-cards:/etc/nginx/conf.d
+      - ./:/var/www/html
+    networks:
+      projects_mynetwork:
+        ipv4_address: 10.11.0.21
+
+  php:
+    build: ./
+    container_name: php-ygo
+    command: bash -c "php-fpm --allow-to-run-as-root"
+    restart: always
+    env_file:
+      - ./.env.dev
+    volumes:
+      - ./:/var/www/html
+    expose:
+      - "9000"
+    networks:
+      projects_mynetwork:
+        ipv4_address: 10.11.0.22
+
+networks:
+  projects_mynetwork:
+   external: true
